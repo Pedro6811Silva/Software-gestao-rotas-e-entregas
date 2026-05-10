@@ -12,10 +12,8 @@ Este projeto é um software desenvolvido para auxiliar no controle de estoque, o
 - Cadastro de produtos e categorias
 - Controle de entrada e saída de mercadorias
 - Relatórios de movimentação e estoque atual
-- Interface amigável desenvolvida em Unity/Framework escolhido
+- Interface amigável desenvolvida em HTML, python,C++
 
 ## Como usar
 1. Clone este repositório
-2. Crie a pasta `images` e adicione sua captura de tela (ex: `estoque_dashboard.png`)
-3. Abra o projeto no Unity ou IDE correspondente
-4. Compile e execute para utilizar o sistema
+2. Crie a pasta qualquer e abre o arquivo em seu navegador padrão.
