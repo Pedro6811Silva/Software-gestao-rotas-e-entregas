@@ -1,7 +1,5 @@
 # Software-gestao-rotas-e-entregas
 
-# Sistema de Gestão de Estoque
-
 Este projeto é um software desenvolvido para auxiliar no controle de estoque, oferecendo funcionalidades de cadastro, movimentação e relatórios.
 
 ## Ilustração
