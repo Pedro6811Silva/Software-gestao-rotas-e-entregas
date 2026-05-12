@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Controle de Rotas e Frotas</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #2c3e50; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        th { background-color: #f4f4f4; }
+        input, button, select { margin: 5px; padding: 8px; }
+        .status { font-weight: bold; }
+        .emrota { color: blue; }
+        .concluido { color: green; }
+        .manutencao { color: red; }
+    </style>
+</head>
+<body>
+    <h1>🚚 Sistema de Controle de Rotas e Frotas</h1>
+
+    <h3>Cadastrar Veículo</h3>
+    <input type="text" id="placa" placeholder="Placa">
+    <input type="text" id="motorista" placeholder="Motorista">
+    <input type="number" id="capacidade" placeholder="Capacidade (kg)">
+    <button onclick="adicionarVeiculo()">Adicionar Veículo</button>
+
+    <h3>Cadastrar Rota</h3>
+    <input type="text" id="origem" placeholder="Origem">
+    <input type="text" id="destino" placeholder="Destino">
+    <input type="number" id="distancia" placeholder="Distância (km)">
+    <input type="number" id="tempo" placeholder="Tempo estimado (h)">
+    <button onclick="adicionarRota()">Adicionar Rota</button>
+
+    <h3>Atribuir Rota</h3>
+    <select id="veiculoSelect"></select>
+    <select id="rotaSelect"></select>
+    <button onclick="atribuirRota()">Atribuir</button>
+
+    <h3>Frotas e Rotas</h3>
+    <table id="tabela">
+        <thead>
+            <tr>
+                <th>Veículo</th>
+                <th>Motorista</th>
+                <th>Capacidade</th>
+                <th>Origem</th>
+                <th>Destino</th>
+                <th>Distância</th>
+                <th>Tempo</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h3>Resumo</h3>
+    <p id="resumo"></p>
+
+    <script>
+        let veiculos = [];
+        let rotas = [];
+        let atribuicoes = [];
+
+        function adicionarVeiculo() {
+            const placa = document.getElementById("placa").value;
+            const motorista = document.getElementById("motorista").value;
+            const capacidade = document.getElementById("capacidade").value;
+            veiculos.push({placa, motorista, capacidade});
+            atualizarSelects();
+        }
+
+        function adicionarRota() {
+            const origem = document.getElementById("origem").value;
+            const destino = document.getElementById("destino").value;
+            const distancia = document.getElementById("distancia").value;
+            const tempo = document.getElementById("tempo").value;
+            rotas.push({origem, destino, distancia, tempo});
+            atualizarSelects();
+        }
+
+        function atualizarSelects() {
+            const veiculoSelect = document.getElementById("veiculoSelect");
+            const rotaSelect = document.getElementById("rotaSelect");
+            veiculoSelect.innerHTML = "";
+            rotaSelect.innerHTML = "";
+
+            veiculos.forEach((v, i) => {
+                veiculoSelect.innerHTML += `<option value="${i}">${v.placa} - ${v.motorista}</option>`;
+            });
+            rotas.forEach((r, i) => {
+                rotaSelect.innerHTML += `<option value="${i}">${r.origem} → ${r.destino}</option>`;
+            });
+        }
+
+        function atribuirRota() {
+            const vIndex = document.getElementById("veiculoSelect").value;
+            const rIndex = document.getElementById("rotaSelect").value;
+            const veiculo = veiculos[vIndex];
+            const rota = rotas[rIndex];
+            atribuicoes.push({...veiculo, ...rota, status:"Em rota"});
+            atualizarTabela();
+        }
+
+        function atualizarTabela() {
+            const tbody = document.querySelector("#tabela tbody");
+            tbody.innerHTML = "";
+            atribuicoes.forEach((a, index) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${a.placa}</td>
+                        <td>${a.motorista}</td>
+                        <td>${a.capacidade} kg</td>
+                        <td>${a.origem}</td>
+                        <td>${a.destino}</td>
+                        <td>${a.distancia} km</td>
+                        <td>${a.tempo} h</td>
+                        <td class="status ${a.status.toLowerCase().replace(' ','')}">${a.status}</td>
+                        <td>
+                            <button onclick="concluir(${index})">Concluir</button>
+                            <button onclick="manutencao(${index})">Manutenção</button>
+                            <button onclick="remover(${index})">Remover</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            atualizarResumo();
+        }
+
+        function concluir(index) {
+            atribuicoes[index].status = "Concluído";
+            atualizarTabela();
+        }
+
+        function manutencao(index) {
+            atribuicoes[index].status = "Manutenção";
+            atualizarTabela();
+        }
+
+        function remover(index) {
+            atribuicoes.splice(index, 1);
+            atualizarTabela();
+        }
+
+        function atualizarResumo() {
+            let concluidas = atribuicoes.filter(a => a.status === "Concluído").length;
+            let totalKm = atribuicoes.reduce((sum, a) => sum + parseFloat(a.distancia), 0);
+            let totalTempo = atribuicoes.reduce((sum, a) => sum + parseFloat(a.tempo), 0);
+            document.getElementById("resumo").innerText = 
+                `Rotas concluídas: ${concluidas} | Distância total: ${totalKm} km | Tempo total: ${totalTempo} h`;
+        }
+    </script>
+</body>
+</html>
